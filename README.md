@@ -3,10 +3,11 @@
 ### A terminal-based lightweight balance sheet creator
 
 ![Current Version](https://img.shields.io/badge/current_version-alpha-orange)
+
 Created for Computer Science 110 _IEDEC1100_
 ---
 ## Summary and Merit of Project
-There are many programs available online that offer tools to help manage and track personal and business finances. These tools typically come with a wide array of features offered to their users, from simple budget planning to filing invoices. However, the abundance of flexibility offered in their causes too much distress for users, limiting the effectiveness of the program. This statement is backed by the Paradox of Choice, a popularized by psychologist Barry Schwartz. It suggests that while having choices can increase user satisfaction to a point, offering too many options can lead to decision paralysis, increased anxiety, and reduced satisfaction.
+There are many programs available online that offer tools to help manage and track personal and business finances. These tools typically come with a wide array of features offered to their users, from simple budget planning to filing invoices. However, the abundance of flexibility offered in their causes too much distress for users, limiting the effectiveness of the program. This statement is backed by the Paradox of Choice, popularized by psychologist Barry Schwartz. It suggests that while having choices can increase user satisfaction to a point, offering too many options can lead to decision paralysis, increased anxiety, and reduced satisfaction.
 These may include, but is not limited to:
 - Make the app feel cluttered or confusing.
 - Increase cognitive load, leading users to disengage.
@@ -68,7 +69,7 @@ ___
 
 | Operating System | Requirements |
 | ------ | ------ |
-| Windows | 32bit or 64bit running at least Windows 7 |
+| Windows | x32 or x64 running at least Windows 7 |
 | macOS | Minimum version 10.9 |
 | Linux-based | Any Linux-based os capable with CPython 3.10 |
 
@@ -104,4 +105,5 @@ pyinstaller --onefile --noconsole BalanceSheet.py
 ---
 ## License
 GNU General Public License v2.0
+
 _The best things in life are free, therefore BSCreator is the best._
