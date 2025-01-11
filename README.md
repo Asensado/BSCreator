@@ -4,9 +4,11 @@
 
 ![Current Version](https://img.shields.io/badge/current_version-alpha-orange)
 
-Created for Computer Science 110 _IEDEC1100_
 ---
 ## Summary and Merit of Project
+
+Created for Computer Science 110 _IEDEC1100_
+
 There are many programs available online that offer tools to help manage and track personal and business finances. These tools typically come with a wide array of features offered to their users, from simple budget planning to filing invoices. However, the abundance of flexibility offered in their causes too much distress for users, limiting the effectiveness of the program. This statement is backed by the Paradox of Choice, popularized by psychologist Barry Schwartz. It suggests that while having choices can increase user satisfaction to a point, offering too many options can lead to decision paralysis, increased anxiety, and reduced satisfaction.
 These may include, but is not limited to:
 - Make the app feel cluttered or confusing.
@@ -44,7 +46,7 @@ BSCreator offers a simple solution to an oversaturated segment of the financial 
 - **Tutorial** - introduces the user to the concept of a balance sheet, and how to navigate through the program.
 
 ## Balance Sheet Details
-All concepts and accounting principles are from Business Management 120 (class code here). 
+All concepts and accounting principles are from Business Management 120 BEBUC1200. 
 ![Example Formatted Balance Sheet](https://github.com/Asensado/BSCreator/blob/ee4f64fad9569c3ddcdc8ea09a219398e2e50127/gifs/image1.jpg)
 
 
@@ -54,6 +56,8 @@ The program will navigate the user to creating a balance sheet that is viewable 
 -  Opening balances of each asset, liability, and equity owner
 - Amount of transactions for the month
 - Balances added or deducted for each asset, liability and equity owner
+
+![Sheet Creation Project Flow](https://github.com/Asensado/BSCreator/blob/7674c99b7c0446ba73076e5726b6d047bf8ca7a9/gifs/flowchart.png)
 
 It'll then auto-sum the balances and check if the balance sheet is balanced, letting the user know.
 
@@ -85,13 +89,14 @@ ___
 | Operating System | Requirements |
 | ------ | ------ |
 | Windows | x32 or x64 running at least Windows 7 |
-| macOS | Minimum version 10.9 |
-| Linux-based | Any Linux-based os capable with CPython 3.10 |
+| macOS | running at least 10.9 |
+| Linux-based | Any Linux-based OS capable with CPython 3.10 running at least 4.13|
 
 ## Installation for Windows
 Download BSCreator from the [Releases Page](https://github.com/Asensado/BSCreator/releases) of this repository. 
 After, create a new folder in any location you wish called `BS Holder`
 ![Creating a BS folder on desktop](https://github.com/Asensado/BSCreator/blob/df23a0057a479cb25f9ef6fbe3db69c493da1472/gifs/video1.gif)
+
 From there, move the `.exe` file to the newly created folder.
 All data, from your business name to created balance sheets will be found here.
 You can now start the program.
