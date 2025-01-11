@@ -43,6 +43,21 @@ BSCreator offers a simple solution to an oversaturated segment of the financial 
 - **Directory** - to view a list of all created sheets and whether they are balanced or not
 - **Tutorial** - introduces the user to the concept of a balance sheet, and how to navigate through the program.
 
+## Balance Sheet Details
+All concepts and accounting principles are from Business Management 120 (class code here). 
+![Example Formatted Balance Sheet](https://github.com/Asensado/BSCreator/blob/ee4f64fad9569c3ddcdc8ea09a219398e2e50127/gifs/image1.jpg)
+
+
+The program will navigate the user to creating a balance sheet that is viewable through spreadsheet viewers such as Excel and LibreOffice. It'll acquire data in a questionnaire type of form and ask the user the following questions:
+- Amount of assets, liabilities, and equity Owners
+- Names of each asset, liability, and equity owner
+-  Opening balances of each asset, liability, and equity owner
+- Amount of transactions for the month
+- Balances added or deducted for each asset, liability and equity owner
+
+It'll then auto-sum the balances and check if the balance sheet is balanced, letting the user know.
+
+
 ## Libraries
 BSCreator _should_ run on any python interpreter version 3.10 and above. Users may need to install all required libraries or modules using `pip install -r requirements.txt`
 
