@@ -1,5 +1,4 @@
 # BSCreator
----
 ### A terminal-based lightweight balance sheet creator
 
 ![Current Version](https://img.shields.io/badge/current_version-alpha-orange)
@@ -118,7 +117,7 @@ Run PyInstaller
 ```
 pyinstaller --onefile BalanceSheet.py
 ```
-Alternatively, you could use `thinker` to create a lightweight GUI version of the app, then supress the terminal window with `--console`
+Alternatively, you could use `tkinter` to create a lightweight GUI version of the app, then supress the terminal window with `--console`
 ```
 pyinstaller --onefile --noconsole BalanceSheet.py
 ```
