@@ -33,31 +33,48 @@ import datetime
 import pickle
 import glob
 import time
+import signal
+import sys
+
+#Prevents user from exiting the program with Control + C
+def keyboard_interrupt(signal, frame):
+    program()
 
 #Check if business name already exists, and create one if not
 def check_dependencies():
+    #Checks required files
     is_named = path.isfile("business_name.txt")
-    is_path = path.isdir("usr_data")
     is_directed = path.isfile("directory.txt")
+    
     try:
+        #Asks user to enter a business name if they haven't yet
         if not is_named:
             change_business_name()
-
-        #Check if user data path exists, and create one if not
-        if not is_path:
-            os.mkdir("usr_data")
-            
+        
+        #Sets "usr_data" as the default directory if there isn't a directory set
         if not is_directed:
             temp_directory = open("directory.txt", "w")
             temp_directory.write("usr_data")
+            global directory
+            directory = "usr_data"
             temp_directory.close()
-            
     except PermissionError:
         print(f"Permission denied: Unable to create required file/s.\nPlease make sure you have the proper permissions.")
     except Exception as e:
         print(f"An error occurred: {e}")
     else:
+        with open("business_name.txt", "r") as file_temp:
+            global current_business_name
+            current_business_name = file_temp.read() #Accesses the file containing the business name and sets it as a global variable
+        
+        with open("directory.txt") as file_temp:
+            directory = file_temp.read() #Accesses the file containing the directory and sets it as a global variable
+        
+        is_path = path.isdir(directory)
+        #Asks the user if they want to run a tutorial
         if not is_path:
+            os.mkdir(directory) #Check if user data path exists, and create one if not
+            
             print(f"Is this your first time running this program?\nIf so, would you like to run a tutorial?\n[Y/N]")
             input_question = str(input()).upper()
             match input_question:
@@ -65,67 +82,91 @@ def check_dependencies():
                     tutorial()
                 case "N":
                     main_menu()
-                case _:
+                case _: #Catch-all that skips the tutorial
                     print(f"Input perceived as \"N\"")
                     pass
-        global current_business_name
-        with open("business_name.txt", "r") as file_temp:
-            current_business_name = file_temp.read()
-        
-        global directory
-        with open("directory.txt") as file_temp:
-            directory = file_temp.read()
 
+#Custom clear screen function for cross-platform compatibility
 def clear_screen():
-    #Posix is identifier for different os'
-    if(os.name == 'posix'):
+    if(os.name == 'posix'): #Posix is identifier for different os'
        os.system('clear')
     else:
        os.system('cls')
-    
+
 def main_menu():
-    clear_screen()
-    print(f"\tMain Menu")
-    print(f"\t{current_business_name} Balance Sheet Manager")
-    print("==========================================================================")
-    print(f"[1]\tCreate or edit a balance sheet")
-    print(f"[2]\tView saved balance sheet/s and their status")
-    print(f"[3]\tRun the tutorial")
-    print(f"[4]\tChange program settings")
-    print(f"[5]\tExit Program")
-    input_menu = int(input())
+    try:
+        while True:
+            clear_screen()
+            print("==========================================================================")
+            print(f"\tMain Menu")
+            print(f"\t{current_business_name} Balance Sheet Creator")
+            print("==========================================================================")
+            print(f"[1]\tCreate or edit a balance sheet")
+            print(f"[2]\tView saved balance sheet/s and their status")
+            print(f"[3]\tRun the tutorial")
+            print(f"[4]\tChange program settings")
+            print(f"[5]\tExit Program")
+            
+            #Error handling for selecting a menu option
+            try:
+                input_menu = int(input())
+            except ValueError: #Lets user know to only enter numbers
+                print("Enter numbers only. Try again.")
+            else:
+                if input_menu not in range (1, 6): #Checks if input is within 1-5
+                    print(f"Please enter a number from the options.")
+                else:
+                    break #Exits loop
+    except NameError as error: #This error occurs when the program cannot access business_name.txts due to perms, and does not define current_business_name
+        print(f"{'\n' * 2}An error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.{'\n' * 2}Error: {error}")
+        input(f"\nPress Enter to exit...")
+        sys.exit()
+        
     
-    match input_menu:
-        case 1:
-            new_sheet()
-        case 2:
-            view_saved()
-        case 3:
-            tutorial()
-        case 4:
-            settings_menu()
-        case 5:
-            exit()
-        case _:
-            print(f"Please enter a number from the options.")
-            main_menu()
- 
+    #Using match case instead of if statements for cleaner code
+    try:
+        match input_menu:
+            case 1:
+                new_sheet()
+            case 2:
+                view_saved()
+            case 3:
+                tutorial()
+            case 4:
+                settings_menu()
+            case 5:
+                sys.exit() #Built-in exit function, pretty cool
+    except UnboundLocalError as error: #Match case would not be able to take input_menu because of the NameError... error
+        print(f"{'\n' * 2}An error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.{'\n' * 2}Error: {error}")
+        input(f"\nPress Enter to exit...")
+        sys.exit()
+
 def settings_menu():
-    clear_screen()
-    print(f"\tSettings")
-    print("==========================================================================")
-    print(f"[1]\tChange default save directory")
-    print(f"[2]\tChange business name")
-    print(f"[3]\tBack to Main Menu")
-    input_menu = int(input())
     
+    while True:
+        clear_screen()
+        print(f"\tSettings")
+        print("==========================================================================")
+        print(f"[1]\tChange default save directory")
+        print(f"[2]\tChange business name")
+        print(f"[3]\tBack to Main Menu")
+        
+        try:
+            input_menu = int(input())
+        except ValueError: #Lets user know to only enter numbers
+            print("Enter numbers only. Try again.")
+        else:
+            if input_menu not in range (1, 4): #Checks if input is within 1-4
+                print(f"Please enter a number from the options.")
+            else:
+                break #Exits loop 
     match input_menu:
         case 1:
             change_directory()
         case 2:
             change_business_name()
         case 3:
-            main_menu()
+            program()
         case _:
             print(f"Please enter a number from the options.")
             settings_menu()
@@ -201,14 +242,21 @@ def change_business_name():
     file_name_business.close()
 
 def new_sheet():
-    clear_screen()
     get_date()
     date = datetime.datetime.now().date()
     #These variables will be used for For loops to store names into lists
-    amt_assets = int(input(f"How many assets do you have?\n"))
-    amt_liabilities = int(input(f"How many liabilities do you have?\n"))
-    amt_equity_entities = int(input(f"How many equity entities do you have?\n"))
-
+    
+    while True:
+        clear_screen()
+        try:
+            amt_assets = int(input(f"How many assets do you have?\n"))
+            amt_liabilities = int(input(f"How many liabilities do you have?\n"))
+            amt_equity_entities = int(input(f"How many equity entities do you have?\n"))
+        except ValueError: #Lets user know to only enter numbers
+            print("Enter numbers only. Try again.")
+        else:
+            break
+    
     lst_assets = []
     lst_liabilities = []
     lst_equity_entities = []
@@ -216,6 +264,8 @@ def new_sheet():
     lst_categories = ["Transactions", "Assets"]
     
     lst_empty = [""]
+    
+    clear_screen()
     
     for a in range(amt_assets):
         temp_asset = str(input(f"What is the name of the asset {a + 1}?\n"))
@@ -230,36 +280,42 @@ def new_sheet():
         
     lst_opening_balances = ["Opening Balances"]
     
-    
-    b = 0
-    for a in lst_assets:
-        temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
-        lst_opening_balances.append(temp_balance)
-        
-        if b >= 1:
-            lst_categories.append("")
-        b += 1
-    
-    lst_categories.append("Liabilities")
-    b = 0
-    for a in lst_liabilities:
-        temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
-        lst_opening_balances.append(temp_balance)
-        
-        if b >= 1:
-            lst_categories.append("")
-        b += 1
+    while True:
+        clear_screen()
+        try:
+            b = 0
+            for a in lst_assets:
+                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                lst_opening_balances.append(temp_balance)
+                
+                if b >= 1:
+                    lst_categories.append("")
+                b += 1
+            
+            lst_categories.append("Liabilities")
+            b = 0
+            for a in lst_liabilities:
+                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                lst_opening_balances.append(temp_balance)
+                
+                if b >= 1:
+                    lst_categories.append("")
+                b += 1
 
-    lst_categories.append("Equity")
-    b = 0
-    for a in lst_equity_entities:
-        temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
-        lst_opening_balances.append(temp_balance)
-        
-        if b >= 1:
-            lst_categories.append("")
-        b += 1
-        
+            lst_categories.append("Equity")
+            b = 0
+            for a in lst_equity_entities:
+                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                lst_opening_balances.append(temp_balance)
+                
+                if b >= 1:
+                    lst_categories.append("")
+                b += 1
+        except ValueError:
+            print("Enter numbers only. Exclude \"$\". Try again.")
+        else:
+            break
+    
     #Creates a new CSV
     filename = check_existing_sheet()
     current_file = open(filename, "w", newline='')
@@ -273,12 +329,18 @@ def new_sheet():
     current_balance_sheet.writerow(lst_empty + lst_object_names)
     current_balance_sheet.writerow(lst_opening_balances)
     
-    clear_screen()
-    
-    amt_transactions = int(input(f"How many transactions will you add?\n"))
+    while True:
+        clear_screen()
+        try:
+            amt_transactions = int(input(f"How many transactions will you add?\n"))
+        except ValueError:
+            print("Enter numbers only. Try again.")
+        else:
+            break
     
     lst_previous_row = lst_opening_balances
     
+    clear_screen()
     for a in range(amt_transactions):
         transaction_balance = []
         transaction_balance.append(a + 1)
@@ -307,6 +369,8 @@ def new_sheet():
     print(f"\n{is_balanced}")
     
     print(f"\nBalance Sheet created successfully for {month} {year}.\nSaved at {filename}\n")
+    
+    input(f"\nPress Enter to go back to the menu...")
 
 def check_is_balanced(balance_sheet, assets):
     
@@ -348,6 +412,7 @@ def view_saved():
 
     if len(csv_files) < 1:
         print(f"No sheets found under folder {directory}")
+        input(f"\nPress Enter to go back to the main menu...")
         return
 
     temp_directory = directory + "/*.bin"
@@ -395,6 +460,7 @@ def tutorial():
     print(f"__________________________________________________\n")
     time.sleep(0.5)
     
+    clear_screen()
     print(f"> How to use the program to create balance sheets?")
     time.sleep(2)
     print(f"We'll create a simple balance sheet for ourselves, to keep track of personal expenses.")
@@ -450,6 +516,7 @@ def tutorial():
         
     lst_opening_balances = ["Opening Balances"]
     
+    clear_screen()
     time.sleep(2.5)
     print(f"What is the current opening balance of your Bank Account?")
     time.sleep(2.5)
@@ -468,6 +535,7 @@ def tutorial():
     print(f"> Now we move onto transactions, which are the dealings a business, or you, do.")
     input("Press Enter to continue...")
     
+    clear_screen()
     print(f"How many transactions will you add?")
     time.sleep(1.5)
     print(f"{os.getlogin()} entered \"2\"\n")
@@ -475,6 +543,7 @@ def tutorial():
     print(f"\n> This means you paid for your Home Bills twice in the month.\n")
     time.sleep(3)
     
+    clear_screen()
     print("Transaction 1")
     
     print(f"What is the added or subtracted amount of Bank Account?")
@@ -544,6 +613,12 @@ def tutorial():
     time.sleep(5)
     input(f"\nPress Enter to go back to the main menu...")
 
+def program():
+    while True:
+        main_menu()
+
+#Sets Control + C as the signal to listen
+signal.signal(signal.SIGINT, keyboard_interrupt)
+
 check_dependencies()
-while True:
-    main_menu()
+program()
