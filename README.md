@@ -1,7 +1,7 @@
 # BSCreator
 ### A terminal-based lightweight balance sheet creator
 
-![Current Version](https://img.shields.io/badge/current_version-alpha-orange)
+![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-not_submitted-red)
 
 ---
 ## Summary and Merit of Project
@@ -44,15 +44,20 @@ BSCreator offers a simple solution to an oversaturated segment of the financial 
 - **Directory** - to view a list of all created sheets and whether they are balanced or not
 - **Tutorial** - introduces the user to the concept of a balance sheet, and how to navigate through the program.
 
+## Use Case
+- Streamline balance sheet spreadsheet creation
+- Useable for bulk spreadsheet creation to be used for machine data learning
+- Make Business Management 120/Accounting 120 assignments easier
+
 ## Balance Sheet Details
 All concepts and accounting principles are from Business Management 120 BEBUC1200. 
 ![Example Formatted Balance Sheet](https://github.com/Asensado/BSCreator/blob/ee4f64fad9569c3ddcdc8ea09a219398e2e50127/gifs/image1.jpg)
-
+_*Final export CSVs will not be formatted_
 
 The program will navigate the user to creating a balance sheet that is viewable through spreadsheet viewers such as Excel and LibreOffice. It'll acquire data in a questionnaire type of form and ask the user the following questions:
-- Amount of assets, liabilities, and equity Owners
+- Amount of assets, liabilities, and equity owners
 - Names of each asset, liability, and equity owner
--  Opening balances of each asset, liability, and equity owner
+- Opening balances of each asset, liability, and equity owner
 - Amount of transactions for the month
 - Balances added or deducted for each asset, liability and equity owner
 
@@ -73,6 +78,8 @@ BSCreator _should_ run on any python interpreter version 3.10 and above. Users m
 |pickle|Allows serialization and deserialization of Python objects into a byte stream.|
 |glob|Enables pattern matching and retrieval of file paths based on wildcard expressions.|
 |time|Provides functions to work with time, such as delays, timestamps, and conversions.|
+|signal|Provides functions to detect and handle signals, which are interruptions to a running program.|
+|configparser|Allows you to read, write, and modify .ini files used for program configurations.|
 
 ## Project Restrictions
 _Self-imposed guidelines when developing the project_
@@ -100,8 +107,8 @@ From there, move the `.exe` file to the newly created folder.
 All data, from your business name to created balance sheets will be found here.
 You can now start the program.
 ___
-## Compiling BSCreator
-You can also compile BSCreator to run on other platforms, such as Linux-based operating systems and macOS 10.9+
+## Compiling BSCreator on Windows
+You can also compile BSCreator to run on your own.
 
 First, install the latest version of [Python](https://www.python.org/downloads/) on your machine.
 Open your terminal, and install PyInstaller.
