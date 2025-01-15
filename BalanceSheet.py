@@ -6,23 +6,7 @@
 #Purpose: Create a Balance Sheet Program
 
 #Pseudocode
-'''
-Stuff to ask user:
-    Amount of Assets 
-    Amount of Liabilities
-    Amount of entities with Equity
-    Opening Balances
-Variable Naming Conventions
-    Amounts: amt_name
-    Name: name_name
-    Lists: lst_name
-    Booleans: bool_name
-    Inputs: input_name
-    #Only applicable to menu
-    Text to Display as variable: text_name
-    CSVs: balancesheet_name_month_year
-    Other files: file_name
-'''
+
 #End
 
 #Import Python Libraries
@@ -38,7 +22,7 @@ import sys
 
 #Prevents user from exiting the program with Control + C
 def keyboard_interrupt(signal, frame):
-    program()
+    program() #Call main program function
 
 #Check if business name already exists, and create one if not
 def check_dependencies():
@@ -58,19 +42,19 @@ def check_dependencies():
             global directory
             directory = "usr_data"
             temp_directory.close()
-    except PermissionError:
+    except PermissionError: #Error occurs when a file is being used by another program, or is not accessible by the user
         print(f"Permission denied: Unable to create required file/s.\nPlease make sure you have the proper permissions.")
     except Exception as e:
         print(f"An error occurred: {e}")
     else:
-        with open("business_name.txt", "r") as file_temp:
-            global current_business_name
+        with open("business_name.txt", "r") as file_temp: #Opens name file
+            global current_business_name #Sets a global variable
             current_business_name = file_temp.read() #Accesses the file containing the business name and sets it as a global variable
         
         with open("directory.txt") as file_temp:
             directory = file_temp.read() #Accesses the file containing the directory and sets it as a global variable
         
-        is_path = path.isdir(directory)
+        is_path = path.isdir(directory) #Checks if directory exists after a directory path is set
         #Asks the user if they want to run a tutorial
         if not is_path:
             os.mkdir(directory) #Check if user data path exists, and create one if not
@@ -111,14 +95,16 @@ def main_menu():
             try:
                 input_menu = int(input())
             except ValueError: #Lets user know to only enter numbers
-                print("Enter numbers only. Try again.")
+                print("\n>> Enter numbers only. Try again.")
+                time.sleep(0.5)
             else:
                 if input_menu not in range (1, 6): #Checks if input is within 1-5
-                    print(f"Please enter a number from the options.")
+                    print(f"\n>> Please enter a number from the options.")
+                    time.sleep(0.5)
                 else:
                     break #Exits loop
     except NameError as error: #This error occurs when the program cannot access business_name.txts due to perms, and does not define current_business_name
-        print(f"{'\n' * 2}An error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.{'\n' * 2}Error: {error}")
+        print(f"\n\nAn error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.\n\nError: {error}")
         input(f"\nPress Enter to exit...")
         sys.exit()
         
@@ -137,7 +123,7 @@ def main_menu():
             case 5:
                 sys.exit() #Built-in exit function, pretty cool
     except UnboundLocalError as error: #Match case would not be able to take input_menu because of the NameError... error
-        print(f"{'\n' * 2}An error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.{'\n' * 2}Error: {error}")
+        print(f"\n\nAn error has occured. You may not have the appropriate permissions to run this program.\nContact your Administrator for help.\n\nError: {error}")
         input(f"\nPress Enter to exit...")
         sys.exit()
 
@@ -154,10 +140,11 @@ def settings_menu():
         try:
             input_menu = int(input())
         except ValueError: #Lets user know to only enter numbers
-            print("Enter numbers only. Try again.")
+            print(f"\n>> Enter numbers only. Try again.")
+            time.sleep(1)
         else:
             if input_menu not in range (1, 4): #Checks if input is within 1-4
-                print(f"Please enter a number from the options.")
+                print(f"\n>> Please enter a number from the options.")
             else:
                 break #Exits loop 
     match input_menu:
@@ -167,9 +154,6 @@ def settings_menu():
             change_business_name()
         case 3:
             program()
-        case _:
-            print(f"Please enter a number from the options.")
-            settings_menu()
  
 def get_date():
     global month
@@ -242,9 +226,13 @@ def change_business_name():
     file_name_business.close()
 
 def new_sheet():
+    clear_screen()
     get_date()
     date = datetime.datetime.now().date()
     #These variables will be used for For loops to store names into lists
+    
+    print(">> Press Control + C anytime to return to the main menu.")
+    time.sleep(2)
     
     while True:
         clear_screen()
@@ -253,7 +241,9 @@ def new_sheet():
             amt_liabilities = int(input(f"How many liabilities do you have?\n"))
             amt_equity_entities = int(input(f"How many equity entities do you have?\n"))
         except ValueError: #Lets user know to only enter numbers
-            print("Enter numbers only. Try again.")
+            clear_screen()
+            print(">> Enter numbers only. Try again.")
+            time.sleep(0.5)
         else:
             break
     
@@ -312,7 +302,9 @@ def new_sheet():
                     lst_categories.append("")
                 b += 1
         except ValueError:
+            clear_screen()
             print("Enter numbers only. Exclude \"$\". Try again.")
+            time.sleep(0.5)
         else:
             break
     
@@ -334,7 +326,9 @@ def new_sheet():
         try:
             amt_transactions = int(input(f"How many transactions will you add?\n"))
         except ValueError:
+            clear_screen()
             print("Enter numbers only. Try again.")
+            time.sleep(0.5)
         else:
             break
     
@@ -446,6 +440,7 @@ def tutorial():
     print("================================================================")
     print("Program Tutorial")
     print("Hands-free, no need to press anything unless told so.")
+    print(">> Press Control + C anytime to return to the main menu.")
     print(f"===============================================================\n")
     time.sleep(5)
     print(f"> What is a balance sheet?")
