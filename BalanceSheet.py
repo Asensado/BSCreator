@@ -6,8 +6,118 @@
 #Purpose: Create a Balance Sheet Program
 
 #Pseudocode
+'''
+    START
 
-#End
+    # Import necessary libraries
+    IMPORT libraries (csv, os, datetime, pickle, glob, time, signal, sys, configparser)
+
+    # Function: Prevent program exit with Control + C
+    DEFINE keyboard_interrupt(signal, frame):
+        CALL main_program()
+
+    # Function: Check if business setup exists
+    DEFINE check_dependencies():
+        IF "config.ini" does not exist:
+            CREATE config file with default settings
+        ELSE:
+            READ config file
+            IF "is_run" is False:
+                CALL change_business_name()
+                SET "is_run" to True in config
+                ASK user for tutorial and handle response
+            SET global variables for directory and business name
+
+    # Function: Change business name
+    DEFINE change_business_name():
+        ASK user for new business name
+        UPDATE config file with new business name
+
+    # Function: Change save directory
+    DEFINE change_directory():
+        ASK user for new directory
+        UPDATE config file with new directory
+
+    # Function: Clear screen
+    DEFINE clear_screen():
+        USE appropriate command to clear screen based on OS
+
+    # Function: Display main menu
+    DEFINE main_menu():
+        LOOP until valid input is received:
+            PRINT menu options
+            TRY to get user input
+            HANDLE invalid inputs
+        MATCHCASE user input:
+            CASE 1: CALL new_sheet()
+            CASE 2: CALL view_saved()
+            CASE 3: CALL tutorial()
+            CASE 4: CALL settings_menu()
+            CASE 5: EXIT program
+
+    # Function: Settings menu
+    DEFINE settings_menu():
+        LOOP until valid input is received:
+            PRINT settings menu
+            TRY to get user input
+            HANDLE invalid inputs
+        MATCHCASE user input:
+            CASE 1: CALL change_directory()
+            CASE 2: CALL change_business_name()
+            CASE 3: RETURN to main menu
+
+    # Function: Get current date
+    DEFINE get_date():
+        STORE current month and year in global variables
+
+    # Function: Check for existing balance sheet
+    DEFINE check_existing_sheet():
+        GET date and construct filename
+        CHECK if file exists:
+            ASK user to overwrite or create new version
+        RETURN appropriate filename
+
+    # Function: Create new balance sheet
+    DEFINE new_sheet():
+        ASK user for numbers of assets, liabilities, equity entities
+        ASK user for names and opening balances for each category
+        CREATE and WRITE balance sheet CSV
+        ASK user for transactions
+        UPDATE balance sheet with transaction details
+        CALL check_is_balanced() to verify balance
+        PRINT success message
+
+    # Function: Check if balance sheet is balanced
+    DEFINE check_is_balanced(balance_sheet, assets_count):
+        READ last row of balance sheet
+        CALCULATE asset and liabilities + equity totals
+        IF totals match:
+            RETURN "Balanced"
+        ELSE:
+            RETURN "Not Balanced"
+
+    # Function: View saved balance sheets
+    DEFINE view_saved():
+        GET all balance sheet files from directory
+        PRINT filenames and balance status
+        ASK user to return to menu
+
+    # Function: Tutorial
+    DEFINE tutorial():
+        WALK user through program features step-by-step
+
+    # Main program logic
+    DEFINE main_program():
+        SET signal handler for keyboard interrupt
+        CALL check_dependencies()
+        WHILE True:
+            CALL main_menu()
+
+    # Start the program
+    CALL main_program()
+
+    END
+'''
 
 #Import Python Libraries
 import csv
@@ -19,48 +129,41 @@ import glob
 import time
 import signal
 import sys
+import configparser
 
 #Prevents user from exiting the program with Control + C
 def keyboard_interrupt(signal, frame):
     program() #Call main program function
 
-#Check if business name already exists, and create one if not
+#Checks config file
 def check_dependencies():
-    #Checks required files
-    is_named = path.isfile("business_name.txt")
-    is_directed = path.isfile("directory.txt")
+    config = configparser.ConfigParser()
     
-    try:
-        #Asks user to enter a business name if they haven't yet
-        if not is_named:
-            change_business_name()
+    if not path.isfile("config.ini"):
+        #Adds sections and contents in config file
+        config["General"] = {"business_name": "", "directory": "usr_data", "is_run": False}
         
-        #Sets "usr_data" as the default directory if there isn't a directory set
-        if not is_directed:
-            temp_directory = open("directory.txt", "w")
-            temp_directory.write("usr_data")
-            global directory
-            directory = "usr_data"
-            temp_directory.close()
-    except PermissionError: #Error occurs when a file is being used by another program, or is not accessible by the user
-        print(f"Permission denied: Unable to create required file/s.\nPlease make sure you have the proper permissions.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        with open("config.ini", "w") as config_file:
+            config.set("General", "is_run", "True")
+            config.write(config_file)
+            
+        change_business_name()
+        
     else:
-        with open("business_name.txt", "r") as file_temp: #Opens name file
-            global current_business_name #Sets a global variable
-            current_business_name = file_temp.read() #Accesses the file containing the business name and sets it as a global variable
+        config.read("config.ini") #Read config file
         
-        with open("directory.txt") as file_temp:
-            directory = file_temp.read() #Accesses the file containing the directory and sets it as a global variable
+        config_run = config.getboolean("General", "is_run")
         
-        is_path = path.isdir(directory) #Checks if directory exists after a directory path is set
-        #Asks the user if they want to run a tutorial
-        if not is_path:
-            os.mkdir(directory) #Check if user data path exists, and create one if not
+        if not config_run:
+            change_business_name()
+            
+            config.set("General", "is_run", "True")
+            
+            with open("config.ini", "w") as config_file:
+                config.write(config_file)
             
             print(f"Is this your first time running this program?\nIf so, would you like to run a tutorial?\n[Y/N]")
-            input_question = str(input()).upper()
+            input_question = str(input()).strip().upper()
             match input_question:
                 case "Y":
                     tutorial()
@@ -69,6 +172,44 @@ def check_dependencies():
                 case _: #Catch-all that skips the tutorial
                     print(f"Input perceived as \"N\"")
                     pass
+            
+    config.read("config.ini")
+    
+    global directory #Create global variable "directory"
+    directory = config.get("General", "directory")
+    if not path.isdir(directory):
+        os.mkdir(directory)
+    
+    global current_business_name
+    current_business_name = config.get("General", "business_name")
+
+def change_business_name():
+    clear_screen()
+    config = configparser.ConfigParser()
+    config.read("config.ini") #Read config file
+    
+    temp_name = str(input(f"What is the name of the business?\n"))
+    global current_business_name
+    current_business_name = temp_name
+    config.set("General", "business_name", current_business_name)
+    
+    with open("config.ini", "w") as config_file:
+        config.write(config_file)
+
+def change_directory():
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    
+    clear_screen()
+    global directory
+    directory = str(input("Enter the new directory:\n"))
+    
+    config.set("General", "directory", directory)
+    
+    with open("config.ini", "w") as config_file:
+        config.write(config_file)
+        
+    check_dependencies()
 
 #Custom clear screen function for cross-platform compatibility
 def clear_screen():
@@ -95,12 +236,12 @@ def main_menu():
             try:
                 input_menu = int(input())
             except ValueError: #Lets user know to only enter numbers
-                print("\n>> Enter numbers only. Try again.")
-                time.sleep(0.5)
+                print(">> Enter numbers only. Try again.")
+                time.sleep(0.3)
             else:
                 if input_menu not in range (1, 6): #Checks if input is within 1-5
-                    print(f"\n>> Please enter a number from the options.")
-                    time.sleep(0.5)
+                    print(f">> Please enter a number from the options.")
+                    time.sleep(0.3)
                 else:
                     break #Exits loop
     except NameError as error: #This error occurs when the program cannot access business_name.txts due to perms, and does not define current_business_name
@@ -140,13 +281,14 @@ def settings_menu():
         try:
             input_menu = int(input())
         except ValueError: #Lets user know to only enter numbers
-            print(f"\n>> Enter numbers only. Try again.")
-            time.sleep(1)
+            print(">> Enter numbers only. Try again.")
+            time.sleep(0.3)
         else:
             if input_menu not in range (1, 4): #Checks if input is within 1-4
-                print(f"\n>> Please enter a number from the options.")
+                print(">> Please enter a number from the options.")
+                time.sleep(0.3)
             else:
-                break #Exits loop 
+                break #Exits loop
     match input_menu:
         case 1:
             change_directory()
@@ -207,24 +349,6 @@ def check_existing_sheet():
     else:
         return filename
 
-def change_directory():
-    clear_screen()
-    directory = str(input("Enter the new directory:\n"))
-    
-    with open("directory.txt", "w") as file:
-        file.write(directory)
-        
-    check_dependencies()
-
-def change_business_name():
-    #Ask and store name of business
-    file_name_business = open("business_name.txt", "w")
-    name_business = str(input(f"What is the name of the business?\n"))
-    global current_business_name
-    current_business_name = name_business
-    file_name_business.write(name_business)
-    file_name_business.close()
-
 def new_sheet():
     clear_screen()
     get_date()
@@ -258,15 +382,36 @@ def new_sheet():
     clear_screen()
     
     for a in range(amt_assets):
-        temp_asset = str(input(f"What is the name of the asset {a + 1}?\n"))
-        lst_assets.append(temp_asset)
+        while True: #Ensures the user enters something
+            temp_asset = str(input(f"What is the name of the asset {a + 1}?\n"))
+            
+            if not len(temp_asset.strip()) == 0:
+                lst_assets.append(temp_asset)
+                break
+            else:
+                print(f"Please enter a name.")
+                continue
         
     for a in range(amt_liabilities):
-        temp_liability = str(input(f"What is the name of the liability {a + 1}?\n"))
-        lst_liabilities.append(temp_liability)
+        while True: #Ensures the user enters something
+            temp_liability = str(input(f"\nWhat is the name of the liability {a + 1}?\n"))
+            
+            if not len(temp_liability.strip()) == 0:
+                lst_liabilities.append(temp_liability)
+                break
+            else:
+                print(f"Please enter a name.")
+                continue
     for a in range(amt_equity_entities):
-        name_current_entity = str(input(f"What is the name of the equity entity {a + 1}?\n"))
-        lst_equity_entities.append(name_current_entity)
+        while True: #Ensures the user enters something
+            temp_entity = str(input(f"\nWhat is the name of the equity entity {a + 1}?\n"))
+            
+            if not len(temp_entity.strip()) == 0:
+                lst_equity_entities.append(temp_entity)
+                break
+            else:
+                print(f"Please enter a name.")
+                continue
         
     lst_opening_balances = ["Opening Balances"]
     
@@ -275,7 +420,7 @@ def new_sheet():
         try:
             b = 0
             for a in lst_assets:
-                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                temp_balance = float(input(f"\nWhat is the current opening balance of {a}?\n"))
                 lst_opening_balances.append(temp_balance)
                 
                 if b >= 1:
@@ -295,7 +440,7 @@ def new_sheet():
             lst_categories.append("Equity")
             b = 0
             for a in lst_equity_entities:
-                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                temp_balance = float(input(f"\nWhat is the current opening balance of {a}?\n"))
                 lst_opening_balances.append(temp_balance)
                 
                 if b >= 1:
@@ -460,12 +605,12 @@ def tutorial():
     time.sleep(2)
     print(f"We'll create a simple balance sheet for ourselves, to keep track of personal expenses.")
     time.sleep(3)
-    print(f"> In the menu, start by selecting [1]\n")
+    print(f"> In the menu, you would start by selecting [1]\n")
     
-    time.sleep(5)
+    time.sleep(2)
     print(f"\n\tMain Menu")
     time.sleep(0.5)
-    print(f"\t{current_business_name} Balance Sheet Manager")
+    print(f"\t{current_business_name} Balance Sheet Creator")
     print("==========================================================================")
     print(f"[1]\tCreate or edit a balance sheet")
     print(f"[2]\tView saved balance sheet/s and their status\n")
@@ -476,56 +621,56 @@ def tutorial():
     
     time.sleep(2)
     clear_screen()
-    print(f">> Next, answer the questions asked below.")
+    print(f">> Next, you would answer the questions asked below.")
 
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"How many assets do you have?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"1\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"How many liabilities do you have?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"1\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"How many equity entities do you have?")
-    time.sleep(3)
+    time.sleep(2)
     print(f"{username} entered \"1\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
 
     lst_assets = ["Bank Account", "Home Bills", username]
     clear_screen()
     
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the name of the asset 1?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"Bank Account\"\n")
     
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the name of the liability 1?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"Home Bills\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the name of the equity entity 1?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"{username}\"\n")
         
     lst_opening_balances = ["Opening Balances"]
     
     clear_screen()
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the current opening balance of your Bank Account?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"6000\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the current opening balance of your Home Bills?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"2500\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the current opening balance of your Equity?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"3500\"\n")
     
-    time.sleep(3)
+    time.sleep(2)
     print(f"\n> At this point, the program saves all your info to a file.")
     print(f"> Now we move onto transactions, which are the dealings a business, or you, do.")
     input("Press Enter to continue...")
@@ -533,38 +678,53 @@ def tutorial():
     clear_screen()
     print(f"How many transactions will you add?")
     time.sleep(1.5)
-    print(f"{os.getlogin()} entered \"2\"\n")
-    time.sleep(2.5)
-    print(f"\n> This means you paid for your Home Bills twice in the month.\n")
-    time.sleep(3)
+    print(f"{os.getlogin()} entered \"3\"\n")
+    time.sleep(2)
     
     clear_screen()
+    print("> For the first two transactions, you're paying your home bills.")
     print("Transaction 1")
     
     print(f"What is the added or subtracted amount of Bank Account?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"-1000\"\n")
-    time.sleep(2.5)
-    print(f"> You put \"-1000\" since you paid $1000 worth of your bills. \n> If you were depositing money, you would remove \"-\".")
-    time.sleep(5)
+    time.sleep(2)
+    print(f"> You put \"-1000\" since you paid $1000 worth of your bills. \n> If you were depositing money, you don't need to add a symbol.")
+    time.sleep(3.5)
     print(f"\nWhat is the added or subtracted amount of Home Bills?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"-1000\"\n")
-    time.sleep(2.5)
-    print(f"> You put \"-1000\" since you paid $1000 worth of your bills from your bank account. \n> If you had more bills to pay, you would remove \"-\".")
-    time.sleep(1.5)
+    time.sleep(2)
+    print(f"> You put \"-1000\" since you paid $1000 worth of your bills from your bank account. \n> If you had more bills to pay, you would instead ADD more balance to your bills.")
+    time.sleep(0.5)
     
     input("Press Enter to continue...")
     
     print(f"\nTransaction 2")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"\nWhat is the added or subtracted amount of Bank Account?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"-1500\"\n")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"What is the added or subtracted amount of Home Bills?")
-    time.sleep(2.5)
+    time.sleep(2)
     print(f"{username} entered \"-1500\"\n")
+    
+    input("Press Enter to continue...")
+    
+    print(f"\n> In this transaction, you received your paycheck of $3000.")
+    print(f"\nTransaction 3")
+    time.sleep(2)
+    print(f"\nWhat is the added or subtracted amount of Bank Account?")
+    time.sleep(2)
+    print(f"{username} entered \"3000\"\n")
+    time.sleep(2)
+    print(f"What is the added or subtracted amount of Me?")
+    time.sleep(2)
+    print(f"{username} entered \"3000\"\n")
+    time.sleep(2)
+    print(f"> When a business or individual does business (makes money, completes a transaction, etc), their equity also increases because profit adds value to the business.\n")
+    print(f"When a company earns more than it spends, the excess gets recorded as earnings, reflecting the owners' claim on the business' assets after the liabilities are paid.\n")
     
     input("Press Enter to create the balance sheet...")
     
@@ -572,13 +732,15 @@ def tutorial():
     current_file = open("tutorial/sample.csv", "w", newline='')
     
     #Combines all asset, liability and equity names into one row
-    lst_object_names = ["", "Bank Account", "Home Bills", {username}]
+    lst_object_names = ["", "Bank Account", "Home Bills", username]
     lst_categories = ["Transactions", "Assets", "Liabilities", "Equity"]
     lst_opening_balances = ["Opening Balances", 6000, 2500, 3500]
     lst_transaction_1 = ["1", -1000, -1000, 0]
     lst_new_balance_1 = ["New Balance", 5000, 1500, 3500]
     lst_transaction_2 = ["2", -1500, -1500, 0]
     lst_new_balance_2 = ["New Balance", 3500, 0, 3500]
+    lst_transaction_3 = ["3", 3000, 0, 3000]
+    lst_new_balance_3 = ["New Balance", 6500, 0, 6500]
     lst_empty = []
     
     
@@ -608,10 +770,13 @@ def tutorial():
     time.sleep(5)
     input(f"\nPress Enter to go back to the main menu...")
 
+#Callable program loop
 def program():
     while True:
         main_menu()
 
+
+#Start of the program
 #Sets Control + C as the signal to listen
 signal.signal(signal.SIGINT, keyboard_interrupt)
 

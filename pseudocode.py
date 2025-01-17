@@ -1,135 +1,112 @@
 '''
-START Program
-  DEFINE Purpose: Create a Balance Sheet Program
+    START
 
-  DEFINE Variables
-    - Amounts: amt_name
-    - Names: name_name
-    - Lists: lst_name
-    - Booleans: bool_name
-    - Inputs: input_name
-    - Text Display: text_name
-    - CSVs: balancesheet_name_month_year
-    - Files: file_name
+    # Import necessary libraries
+    IMPORT libraries (csv, os, datetime, pickle, glob, time, signal, sys, configparser)
 
-  IMPORT Libraries
-    - csv
-    - os
-    - datetime
+    # Function: Prevent program exit with Control + C
+    DEFINE keyboard_interrupt(signal, frame):
+        CALL main_program()
 
-  FUNCTION check_dependencies()
-    IF "business_name.txt" does not exist THEN
-      PROMPT user for business name
-      CREATE and WRITE "business_name.txt"
-    ENDIF
+    # Function: Check if business setup exists
+    DEFINE check_dependencies():
+        IF "config.ini" does not exist:
+            CREATE config file with default settings
+        ELSE:
+            READ config file
+            IF "is_run" is False:
+                CALL change_business_name()
+                SET "is_run" to True in config
+                ASK user for tutorial and handle response
+            SET global variables for directory and business name
 
-    IF "usr_data" directory does not exist THEN
-      CREATE "usr_data" directory
-    ENDIF
+    # Function: Change business name
+    DEFINE change_business_name():
+        ASK user for new business name
+        UPDATE config file with new business name
 
-    READ "business_name.txt" and STORE current_business_name
-  END FUNCTION
+    # Function: Change save directory
+    DEFINE change_directory():
+        ASK user for new directory
+        UPDATE config file with new directory
 
-  FUNCTION clear_screen()
-    IF OS is POSIX THEN
-      EXECUTE 'clear' command
-    ELSE
-      EXECUTE 'cls' command
-    ENDIF
-  END FUNCTION
+    # Function: Clear screen
+    DEFINE clear_screen():
+        USE appropriate command to clear screen based on OS
 
-  FUNCTION main_menu()
-    CALL clear_screen()
-    DISPLAY main menu options:
-      - Create new balance sheet
-      - View/edit balance sheets
-      - Add transaction to balance sheet
-      - Exit program
+    # Function: Display main menu
+    DEFINE main_menu():
+        LOOP until valid input is received:
+            PRINT menu options
+            TRY to get user input
+            HANDLE invalid inputs
+        MATCHCASE user input:
+            CASE 1: CALL new_sheet()
+            CASE 2: CALL view_saved()
+            CASE 3: CALL tutorial()
+            CASE 4: CALL settings_menu()
+            CASE 5: EXIT program
 
-    PROMPT user for menu choice
-    SWITCH menu choice:
-      CASE 1: CALL new_sheet()
-      CASE 2: CALL view_sheets()
-      CASE 3: CALL add_transaction()
-      CASE 4: EXIT program
-      DEFAULT: CALL main_menu()
-    END SWITCH
-  END FUNCTION
+    # Function: Settings menu
+    DEFINE settings_menu():
+        LOOP until valid input is received:
+            PRINT settings menu
+            TRY to get user input
+            HANDLE invalid inputs
+        MATCHCASE user input:
+            CASE 1: CALL change_directory()
+            CASE 2: CALL change_business_name()
+            CASE 3: RETURN to main menu
 
-  FUNCTION get_date()
-    STORE current month and year
-  END FUNCTION
+    # Function: Get current date
+    DEFINE get_date():
+        STORE current month and year in global variables
 
-  FUNCTION check_existing_sheet(month, year)
-    SET filename = "usr_data/" + month + "_" + year + "_balance_sheet.csv"
-    IF file exists THEN
-      INCREMENT a counter suffix (e.g., "_001", "_002") UNTIL unique filename is found
-      RETURN unique filename
-    ELSE
-      RETURN filename
-    ENDIF
-  END FUNCTION
+    # Function: Check for existing balance sheet
+    DEFINE check_existing_sheet():
+        GET date and construct filename
+        CHECK if file exists:
+            ASK user to overwrite or create new version
+        RETURN appropriate filename
 
-  FUNCTION new_sheet()
-    CALL clear_screen()
-    CALL get_date()
+    # Function: Create new balance sheet
+    DEFINE new_sheet():
+        ASK user for numbers of assets, liabilities, equity entities
+        ASK user for names and opening balances for each category
+        CREATE and WRITE balance sheet CSV
+        ASK user for transactions
+        UPDATE balance sheet with transaction details
+        CALL check_is_balanced() to verify balance
+        PRINT success message
 
-    PROMPT user for:
-      - Number of assets
-      - Number of liabilities
-      - Number of equity entities
+    # Function: Check if balance sheet is balanced
+    DEFINE check_is_balanced(balance_sheet, assets_count):
+        READ last row of balance sheet
+        CALCULATE asset and liabilities + equity totals
+        IF totals match:
+            RETURN "Balanced"
+        ELSE:
+            RETURN "Not Balanced"
 
-    INITIALIZE empty lists for:
-      - Asset names
-      - Liability names
-      - Equity entity names
-      - Opening balances
+    # Function: View saved balance sheets
+    DEFINE view_saved():
+        GET all balance sheet files from directory
+        PRINT filenames and balance status
+        ASK user to return to menu
 
-    FOR each asset:
-      PROMPT user for asset name and STORE in list
-    END FOR
+    # Function: Tutorial
+    DEFINE tutorial():
+        WALK user through program features step-by-step
 
-    FOR each liability:
-      PROMPT user for liability name and STORE in list
-    END FOR
+    # Main program logic
+    DEFINE main_program():
+        SET signal handler for keyboard interrupt
+        CALL check_dependencies()
+        WHILE True:
+            CALL main_menu()
 
-    FOR each equity entity:
-      PROMPT user for entity name and STORE in list
-    END FOR
+    # Start the program
+    CALL main_program()
 
-    FOR each item in assets, liabilities, and equity entities:
-      PROMPT user for opening balance and STORE in list
-    END FOR
-
-    CALL check_existing_sheet(month, year) to GET filename
-    CREATE CSV file with:
-      - Categories (Assets, Liabilities, Equity)
-      - Names of items
-      - Opening balances
-  END FUNCTION
-
-  FUNCTION view_sheets()
-    DISPLAY list of CSV files in "usr_data"
-    PROMPT user to select a file
-    OPEN and DISPLAY selected CSV file
-  END FUNCTION
-
-  FUNCTION add_transaction()
-    DISPLAY list of CSV files in "usr_data"
-    PROMPT user to select a file
-    PROMPT user for:
-      - Transaction type (Asset, Liability, Equity)
-      - Name of item
-      - Amount
-    APPEND transaction details to the selected file
-  END FUNCTION
-
-  CALL check_dependencies()
-  CALL main_menu()
-
-END Program
-
-Subtracting 2 lists respectively:
-https://stackoverflow.com/questions/534855/subtracting-2-lists-in-python
-
+    END
 '''
