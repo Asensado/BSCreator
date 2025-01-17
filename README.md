@@ -107,7 +107,7 @@ From there, move the `.exe` file to the newly created folder.
 All data, from your business name to created balance sheets will be found here.
 You can now start the program.
 
-**Visit the [Tutorials page](https://github.com/Asensado/BSCreator/blob/44512f9861d156c2ebd3e6e0f01563e7a4554032/docs/tutorial.md) to learn how to use the program.**
+**Visit the [Tutorials page](https://github.com/Asensado/BSCreator/blob/6132914ca61193d4da5098d0a22e1a440cabe489/docs/tutorial.md) to learn how to use the program.**
 ___
 ## Compiling BSCreator on Windows
 You can also compile BSCreator to run on your own.
