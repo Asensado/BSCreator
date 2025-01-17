@@ -1,7 +1,7 @@
 # BSCreator
 ### A terminal-based lightweight balance sheet creator
 
-![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-not_submitted-red)
+![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-_submission_candidate_1-orange)
 
 ---
 ## Summary and Merit of Project
