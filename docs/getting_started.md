@@ -3,6 +3,7 @@ Welcome to **BSCreator**! This guide walks you through the steps to setup and us
 
 ## Step 1: Launching the Program
 1. Open the `BSHolder` folder you created for the program and double-click `BSCreator.exe` to open the program.
+_Check the [ReadMe]([https://github.com/Asensado/BSCreator](https://github.com/Asensado/BSCreator?tab=readme-ov-file#installation-for-windows)) page for more details._
 2. The program checks for existing settings and guides you through the initial setup if it's your first time using it.
 
 ## Step 2: Initial Setup
