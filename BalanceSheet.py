@@ -14,7 +14,7 @@
 
     # Function: Prevent program exit with Control + C
     DEFINE keyboard_interrupt(signal, frame):
-        CALL main_program()
+        CALL main_menu()
 
     # Function: Check if business setup exists
     DEFINE check_dependencies():
@@ -107,14 +107,14 @@
         WALK user through program features step-by-step
 
     # Main program logic
-    DEFINE main_program():
+    DEFINE main_menu():
         SET signal handler for keyboard interrupt
         CALL check_dependencies()
         WHILE True:
             CALL main_menu()
 
     # Start the program
-    CALL main_program()
+    CALL main_menu()
 
     END
 '''
@@ -133,7 +133,7 @@ import configparser
 
 #Prevents user from exiting the program with Control + C
 def keyboard_interrupt(signal, frame):
-    program() #Call main program function
+    main_menu() #Call main program function
 
 #Checks config file
 def check_dependencies():
@@ -295,7 +295,7 @@ def settings_menu():
         case 2:
             change_business_name()
         case 3:
-            program()
+            main_menu()
  
 def get_date():
     global month
@@ -420,7 +420,7 @@ def new_sheet():
         try:
             b = 0
             for a in lst_assets:
-                temp_balance = float(input(f"\nWhat is the current opening balance of {a}?\n"))
+                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
                 lst_opening_balances.append(temp_balance)
                 
                 if b >= 1:
@@ -430,7 +430,7 @@ def new_sheet():
             lst_categories.append("Liabilities")
             b = 0
             for a in lst_liabilities:
-                temp_balance = float(input(f"What is the current opening balance of {a}?\n"))
+                temp_balance = float(input(f"\nWhat is the current opening balance of {a}?\n"))
                 lst_opening_balances.append(temp_balance)
                 
                 if b >= 1:
@@ -770,15 +770,15 @@ def tutorial():
     time.sleep(5)
     input(f"\nPress Enter to go back to the main menu...")
 
-#Callable program loop
-def program():
-    while True:
-        main_menu()
-
 
 #Start of the program
+check_dependencies()
 #Sets Control + C as the signal to listen
 signal.signal(signal.SIGINT, keyboard_interrupt)
 
-check_dependencies()
-program()
+try:
+    while True:
+        main_menu()
+except RuntimeError:
+    #This error occurs when pressing Control + C on startup. Unknown reason why.
+    main_menu()
