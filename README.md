@@ -1,7 +1,8 @@
 # BSCreator
 ### A terminal-based lightweight balance sheet creator
 
-![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-_submission_candidate_1-orange)
+![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-final_submission_candidate-green)
+![Project Grade](https://img.shields.io/badge/project_grade-n/a-A9A9A9)
 
 ---
 ## Summary and Merit of Project
@@ -40,7 +41,7 @@ BSCreator offers a simple solution to an oversaturated segment of the financial 
 ## Main Features
 - **Main Menu** - for user nagivation
 - **Settings** - for better end-user preference
-- **Balance Sheet Creator** - the main focus of the app
+- **Balance Sheet Creator** - the main focus of the app. Allows users to create balance sheets that they can view in Excel to format and finalize.
 - **Directory** - to view a list of all created sheets and whether they are balanced or not
 - **Tutorial** - introduces the user to the concept of a balance sheet, and how to navigate through the program.
 
