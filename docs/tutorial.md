@@ -35,4 +35,4 @@ Assets = Liabilities + Equity
 
 ***
 ## How to Use the Program
-Visit the [Getting Started Page]() to know how to use the program.
+Visit the [Getting Started Page](https://github.com/Asensado/BSCreator/blob/b4112a640f24693c1661f7b421ba83d4901c5228/docs/getting_started.md) to know how to use the program.
