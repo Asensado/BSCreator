@@ -37,4 +37,4 @@ Your balance sheet will be saved automatically in the specified directory.
 
 ***
 
-Congrats! You're now ready to use **BSCreator**. For any issues, you can always revisit the **Tutorial** option or the [Troubleshooting Guide]() for any issues.
+Congrats! You're now ready to use **BSCreator**. For any issues, you can always revisit the **Tutorial** option or the [Troubleshooting Guide](https://github.com/Asensado/BSCreator/blob/9fca10c4c3c64462cd8bbe0a2bd24fd13bd38050/docs/troubleshooting.md) for any issues.
