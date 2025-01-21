@@ -2,7 +2,9 @@
 ### A terminal-based lightweight balance sheet creator
 
 ![Current Stage](https://img.shields.io/badge/current_stage-alpha-orange) ![Submission Status](https://img.shields.io/badge/submission_status-final_submission_candidate-green)
-![Project Grade](https://img.shields.io/badge/project_grade-n/a-A9A9A9)
+![Project Grade](https://img.shields.io/badge/project_grade-7.5/10-FF0000)
+
+_Failed to include documentation on how to use modules not discussed in class and sources on where it was learned. Will remember this moving forward..._
 
 ---
 ## Summary and Merit of Project
